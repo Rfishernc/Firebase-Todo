@@ -7,17 +7,17 @@
   },
   "task2":
   {
-  "task": "Walk the dog",
+  "task": "Walk the cat",
   "isCompleted": false
   },
   "task3":
   {
-  "task": "Walk the dog",
+  "task": "Walk the mouse",
   "isCompleted": false
   },
   "task4": 
   {
-  "task": "Walk the dog",
+  "task": "Walk the elephant",
   "isCompleted": false
   }
   }

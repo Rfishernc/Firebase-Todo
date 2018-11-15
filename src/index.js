@@ -22,7 +22,7 @@ const getTasks = () => new Promise((resolve, reject) => {
       resolve(tasksArray);
     })
     .catch((err) => {
-      console.log(err);
+      reject(err);
     });
 });
 
@@ -55,6 +55,9 @@ const logInButton = () => {
 const logInStatus = () => {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
+      getTasks().then((tasks) => {
+        showTasks(tasks);
+      });
       console.log(user);
     }
   });
@@ -78,5 +81,3 @@ const init = () => {
 };
 
 init();
-
-
