@@ -3,11 +3,13 @@ import axios from 'axios';
 import apiKeys from '../db/apiKeys.json';
 
 const getTasks = taskId => new Promise((resolve, reject) => {
-  if (taskId) {
+  if (taskId !== undefined) {
     axios
       .get(`${apiKeys.firebaseKeys.databaseURL}/tasks/${taskId}.json`)
       .then((data) => {
-        resolve(data.data);
+        const taskObject = data.data;
+        taskObject.id = taskId;
+        resolve(taskObject);
       })
       .catch((err) => {
         reject(err);
@@ -33,15 +35,11 @@ const getTasks = taskId => new Promise((resolve, reject) => {
   }
 });
 
-const saveEditedTask = () => {
-  $('.editSaveButton').click((event) => {
-    const taskId = event.target.id;
-    console.log(taskId);
-    const editedTask = {
-      task: $('#nameInput').val(),
-      isCompleted: false,
-    };
-    axios.put(`${apiKeys.firebaseKeys.databaseURL}/tasks/${taskId}.json`, JSON.stringify(editedTask))
+const saveEditedTask = (task) => {
+  $('.editSaveButton').click(() => {
+    const editedTask = task;
+    editedTask.task = $('#nameInput').val();
+    axios.put(`${apiKeys.firebaseKeys.databaseURL}/tasks/${editedTask.id}.json`, JSON.stringify(editedTask))
       .then(() => {
         getTasks().then((data) => {
           // eslint-disable-next-line no-use-before-define
@@ -53,7 +51,7 @@ const saveEditedTask = () => {
 
 const editTask = () => {
   $('body').on('click', '.editTaskButton', (event) => {
-    const taskId = event.target.id;
+    const taskId = event.target.dataset.id;
     getTasks(taskId).then((task) => {
       const tempString = `<div>
                     <p>Task name</p>
@@ -63,7 +61,7 @@ const editTask = () => {
       const buttonString = `
       <button type="button" class="btn btn-primary editSaveButton" id='${task.task}' data-toggle="modal" data-target="#creatorModal">Save changes</button>`;
       $('.modal-footer').html(buttonString);
-      saveEditedTask();
+      saveEditedTask(task);
     });
   });
 };
@@ -87,7 +85,7 @@ const showTasks = (tasks) => {
       tempString += `<div class='taskDiv'>
                       <p class='taskText'>${task.task}</p>
                       <p class='deleteButton' id='${task.id}'>X</p>
-                      <p class='editTaskButton' data-toggle="modal" data-target="#creatorModal" id='${task.id}'>Edit</p>
+                      <p class='editTaskButton' data-toggle="modal" data-target="#creatorModal" data-id='${task.id}'>Edit</p>
                      </div>`;
     }
   });

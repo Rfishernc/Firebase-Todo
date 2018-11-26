@@ -48,7 +48,6 @@ const init = () => {
   logOutButton();
   logInStatus();
   createTask.createTask();
-  createTask.saveCreatedTask();
 };
 
 init();
