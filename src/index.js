@@ -3,40 +3,9 @@ import './index.scss';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'bootstrap';
-import axios from 'axios';
 import apiKeys from '../db/apiKeys.json';
-
-const getTasks = () => new Promise((resolve, reject) => {
-  axios
-    .get(`${apiKeys.firebaseKeys.databaseURL}/tasks.json`)
-    .then((data) => {
-      const tasksObject = data.data;
-      const tasksArray = [];
-      if (tasksObject != null) {
-        Object.keys(tasksObject).forEach((task) => {
-          const taskForArray = tasksObject[task];
-          taskForArray.id = task;
-          tasksArray.push(taskForArray);
-        });
-      }
-      resolve(tasksArray);
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
-
-
-const showTasks = (tasks) => {
-  let tempString = '';
-  tasks.forEach((task) => {
-    if (task.isCompleted === false) {
-      tempString += `<p>${task.task}</p>`;
-    }
-  });
-  $('#tasksDiv').html(tempString);
-  $('#tasksDiv').show();
-};
+import createTask from './createTask/createTask';
+import getTasks from './getTasks';
 
 const logInFunction = () => {
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -46,7 +15,7 @@ const logInFunction = () => {
 const logInButton = () => {
   $('#logInButton').click(() => {
     logInFunction();
-    getTasks();
+    getTasks.getTasks();
     $('#logInButton').hide();
     $('#logOutButton').show();
   });
@@ -55,10 +24,9 @@ const logInButton = () => {
 const logInStatus = () => {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      getTasks().then((tasks) => {
-        showTasks(tasks);
+      getTasks.getTasks().then((tasks) => {
+        getTasks.showTasks(tasks);
       });
-      console.log(user);
     }
   });
 };
@@ -69,6 +37,7 @@ const logOutButton = () => {
       $('#logInButton').show();
       $('#logOutButton').hide();
       $('#tasksDiv').hide();
+      $('#createTaskButton').hide();
     });
   });
 };
@@ -78,6 +47,12 @@ const init = () => {
   logInButton();
   logOutButton();
   logInStatus();
+  createTask.createTask();
+  createTask.saveCreatedTask();
 };
 
 init();
+
+export default {
+  logInStatus,
+};

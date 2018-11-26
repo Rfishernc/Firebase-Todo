@@ -7,3 +7,26 @@ body {
 #logOutButton {
   display: none;
 }
+
+#createTaskButton {
+  display: none;
+}
+
+.deleteButton {
+  border: 1px solid red;
+  width: 14px;
+  color: red;
+  background-color: white;
+  display: inline;
+}
+
+.taskText {
+  display: inline;
+}
+
+.editTaskButton {
+  border: 1px solid black;
+  width: 30px;
+  background-color: white;
+  display: inline;
+}
